@@ -1,6 +1,7 @@
 package main
 
 // Import our dependencies. We'll use the standard http library as well as the gorilla router for this app
+//added other libraries like os encoding/json time github.com/dgrijalva/jwt-go that doesn't mentioned in demo
 import (
   "net/http"
   "github.com/gorilla/mux"
@@ -110,9 +111,15 @@ var AddFeedbackHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
     token := jwt.New(jwt.SigningMethodHS256)
 
     /* Set token claims */
-    token.Claims["admin"] = true
-    token.Claims["name"] = "Ado Kukic"
-    token.Claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+    //modyfing below three lines to check the error jwt.Claims does not support indexing
+    //token.Claims["admin"] = true
+    //token.Claims["admin"] = true
+    //token.Claims["name"] = "Ado Kukic"
+    claims := make(jwt.MapClaims)
+    claims["admin"] = true
+    claims["name"] = "Ado Kukic"
+    claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+    token.Claims = claims
 
     /* Sign the token with our secret */
     tokenString, _ := token.SignedString(mySigningKey)
